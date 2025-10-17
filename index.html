@@ -1,0 +1,130 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Olympic Medical Center Concerns</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        h2 {
+            color: #444;
+        }
+        p {
+            color: #555;
+        }
+        ul {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        .highlight {
+            color: #b22222;
+            font-weight: bold;
+        }
+        .conclusion {
+            font-style: italic;
+            margin-top: 20px;
+        }
+        .call-to-action {
+            font-size: 1.2em;
+            color: #b22222;
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Enough is Enough</h1>
+        <p>Our public district hospital, <strong>Olympic Medical Center (OMC)</strong>, is on the brink of closure and financial insolvency.</p>
+        
+        <h2>Indisputable Facts:</h2>
+        <ul>
+            <li>$72 million dollars “lost” from 2022 to 2025</li>
+            <li>5 days cash on hand at the end of 2023 per an official state audit report</li>
+            <li>$30 million dollars currently short of meeting bond obligations</li>
+            <li>70+ quality citations from the Washington Department of Health</li>
+            <li>4 felony convictions against an emergency room physician convicted of sexual assault and rape in 2024</li>
+            <li>$1.4 million lawsuit settlement for failing to pay employees in violation of the Fair Labor Standards Act and state requirements in 2024</li>
+            <li>142% increase in property taxes passed by voters in 2024 to support OMC</li>
+            <li>$30 million dollars of debt resulting in bills and invoices currently going unpaid</li>
+            <li>$9 million dollars lost moving forward due to mismanaging of 340B drug discounts</li>
+            <li>286 minutes waiting on average for emergency room visit (compared to 161 minutes on average in other WA hospitals)</li>
+            <li>6 visits from state auditors since February 2025 for repeated and unaddressed quality and safety problems</li>
+            <li>1 immediate jeopardy citation from the Washington Department of Health in April 2025 threatening closure</li>
+            <li>3 letters from the Centers for Medicare and Medicaid since April 2025 that have threatened to terminate reimbursement</li>
+            <li>3 C-suite members that have resigned in disgrace since July 2025</li>
+        </ul>
+
+        <p>The question for the publicly elected <strong>Board of Commissioners</strong> is: <span class="highlight">How is this oversight?</span></p>
+        
+        <p>Yet the publicly elected Board of Commissioners continues to deflect responsibility - hiring an interim CEO at the cost of <strong>$50,000 per month</strong>, spending recklessly and wastefully on additional consultants at the cost of <strong>$250,000 for 6 weeks</strong>, and pointing to a partnership with the University of Washington, which is exploratory, preliminary, and years away from completion (if it even happens) - as “success.”</p>
+
+        <p>Meanwhile, the threat of mass layoffs, shuttering of services, and financial collapse continues to loom.</p>
+
+        <p class="conclusion"><strong>Conclusion:</strong> The Board of Commissioners has utterly failed in its fiduciary responsibility to provide the necessary oversight of OMC on every level - from ensuring that the public has a safe, quality hospital to providing financial stewardship - leaving the patients, employees, and entire community to suffer the consequences.</p>
+
+        <p class="call-to-action">The citizens of Clallam County deserve better. They deserve accountability. Recall the Board of Commissioners.</p>
+    </div>
+</body>
+</html>
