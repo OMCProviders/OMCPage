@@ -37,6 +37,45 @@
         }
         return gk_fileData[filename] || "";
         }
+        </script><script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
         </script><!DOCTYPE html>
 <html lang="en">
 <head>
@@ -98,6 +137,17 @@
             font-weight: bold;
             margin-bottom: 20px;
         }
+        .petition-link {
+            font-size: 2em;
+            color: black;
+            text-align: center;
+            font-weight: bold;
+            margin-top: 20px;
+            text-decoration: none;
+        }
+        .petition-link:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -133,6 +183,8 @@
         <p class="conclusion"><strong>Conclusion:</strong> The Board of Commissioners has utterly failed in its fiduciary responsibility to provide the necessary oversight of OMC on every level - from ensuring that the public has a safe, quality hospital to providing financial stewardship - leaving the patients, employees, and entire community to suffer the consequences.</p>
 
         <p class="call-to-action">The citizens of Clallam County deserve better. They deserve accountability. Recall the Board of Commissioners.</p>
+
+        <a href="https://www.change.org/p/no-more-games-olympic-medical-center-board-of-commissioners-it-is-time-to-resign?recruiter=1392610827&recruited_by_id=4e4845e0-acdb-11f0-8639-bdbe41ae3b0f&utm_source=share_petition&utm_campaign=petition_dashboard&utm_medium=copylink" class="petition-link">Sign The Petition!</a>
     </div>
 </body>
 </html>
