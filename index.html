@@ -37,7 +37,15 @@
         }
         return gk_fileData[filename] || "";
         }
-        </script><script type="text/javascript">
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Olympic Medical Center Concerns</title>
+    <!-- Include XLSX library for loadFileData -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script type="text/javascript">
         var gk_isXlsx = false;
         var gk_xlsxFileLookup = {};
         var gk_fileData = {};
@@ -45,43 +53,30 @@
           return cell !== '' && cell != null;
         }
         function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
+            if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+                try {
+                    var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                    var firstSheetName = workbook.SheetNames[0];
+                    var worksheet = workbook.Sheets[firstSheetName];
+                    var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                    var filteredData = jsonData.filter(row => row.some(filledCell));
+                    var headerRowIndex = filteredData.findIndex((row, index) =>
+                      row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                    );
+                    if (headerRowIndex === -1 || headerRowIndex > 25) {
+                      headerRowIndex = 0;
+                    }
+                    var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex));
+                    csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                    return csv;
+                } catch (e) {
+                    console.error(e);
+                    return "";
                 }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
             }
+            return gk_fileData[filename] || "";
         }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Olympic Medical Center Concerns</title>
+    </script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -142,24 +137,23 @@
         .clinicians-link:hover {
             text-decoration: underline;
         }
-        .clinicians-list {
-            column-count: 2;
-            column-gap: 20px;
-        }
-        .candidate {
-            margin-bottom: 10px;
-        }
-        .candidate a {
-            color: #b22222;
+        .x-link {
+            font-size: 1.2em;
+            color: #0000FF;
+            text-align: center;
+            margin-top: 10px;
             text-decoration: none;
+            display: block;
         }
-        .candidate a:hover {
+        .x-link:hover {
             text-decoration: underline;
         }
         .update-notice {
-            font-size: 1.2em;
-            color: #555;
+            font-weight: bold;
             text-align: center;
+            margin-top: 20px;
+        }
+        #data-display {
             margin-top: 20px;
         }
     </style>
@@ -195,78 +189,14 @@
 
         <p class="conclusion"><strong>Conclusion:</strong> The Board of Commissioners has utterly failed in its fiduciary responsibility to provide the necessary oversight of OMC on every level - from ensuring that the public has a safe, quality hospital to providing financial stewardship - leaving the patients, employees, and entire community to suffer the consequences.</p>
 
-        <p class="call-to-action">The citizens of Clallam County deserve better. They deserve accountability. Vote out the Board of Commissioners.</p>
-
-        <h2>Endorsements from Clallam County Clinicians</h2>
-        <p>Dear Clallam County Public Hospital District #2 Community:</p>
-        <p>The undersigned Clallam County Clinicians are concerned about the direction healthcare is headed for our community. We strongly endorse the following candidates and encourage you to vote by November 4th, 2025 in their support:</p>
-        
-        <div class="candidate">
-            <p><strong>Gerald B. Stephanz, MD:</strong> <a href="https://voter.votewa.gov/GenericVoterGuide.aspx?e=894&c=05#/candidates/166630/1591630">Voter Guide</a></p>
-        </div>
-        <div class="candidate">
-            <p><strong>Carleen Bensen, MD:</strong> <a href="https://voter.votewa.gov/GenericVoterGuide.aspx?e=894&c=05#/candidates/166631/1591633">Voter Guide</a></p>
-        </div>
-        <div class="candidate">
-            <p><strong>Laurie Force, MS, BSN:</strong> <a href="https://voter.votewa.gov/GenericVoterGuide.aspx?e=894&c=05#/candidates/166632/1589724">Voter Guide</a></p>
-        </div>
-
-        <h2>Clallam County Clinicians</h2>
-        <ul class="clinicians-list">
-            <li>Rudo Ambayi, MD</li>
-            <li>Cesar Andrade, MD</li>
-            <li>Lee Baker, ARNP</li>
-            <li>Brady Barnes, PA-C</li>
-            <li>Anthony Becher, PA-C</li>
-            <li>Rose Bissonnette, MD</li>
-            <li>Matthew Blacke, MD</li>
-            <li>Hannah Briggs, PA-C</li>
-            <li>Laura Bullen, MD</li>
-            <li>Suree Chommuang, ARNP</li>
-            <li>Jessica Cooper, ARNP</li>
-            <li>Adam Cota, MD</li>
-            <li>Jared Davis, DPM</li>
-            <li>Ianir Divinsky, MD</li>
-            <li>Ryan Dunning, PA-C</li>
-            <li>Larry Gordon, MD</li>
-            <li>Dirk Gouge, DO</li>
-            <li>Karsi Grego, ARNP</li>
-            <li>Sarah Heck, PA-C</li>
-            <li>Thomas Herschmiller, MD</li>
-            <li>Timothy Hewitt, MD</li>
-            <li>Josiah Hoskins, PA-C</li>
-            <li>Trevor Jackman, PA-C</li>
-            <li>Lindsay Jensen, MD</li>
-            <li>Art Kehas, MD</li>
-            <li>Tamara Khazbieva, ARNP</li>
-            <li>Matthew Kiddle, PA-C</li>
-            <li>Adam Killpack, DPM</li>
-            <li>Calvin Kuo, MD</li>
-            <li>Thai Lai, DO</li>
-            <li>Angela N. Larson, MD</li>
-            <li>Dustin L. Larson, MD</li>
-            <li>Loren M. Larson, MD</li>
-            <li>Andrew Lazos, PA-C</li>
-            <li>Timothy Lipski, MD</li>
-            <li>Michelle McCullough, ARNP</li>
-            <li>Michael McGuire, ARNP</li>
-            <li>Annie Morrow, PA-C</li>
-            <li>David P. Murphy, MD</li>
-            <li>Nikki Myhre, DO</li>
-            <li>Sheena Plamoottil, MD</li>
-            <li>Joseph Pullara, MD</li>
-            <li>Steven Richards, MD</li>
-            <li>Karsten Schick, ARNP</li>
-            <li>Michele Stafford, DO</li>
-            <li>Matthew Sturm, MD</li>
-            <li>Jennifer Swanson, MD</li>
-            <li>Aleksy Tagintsev, DO</li>
-            <li>Cindy West, DO</li>
-            <li>Jennifer Zerr, ARNP</li>
-        </ul>
+        <p class="call-to-action">The citizens of Clallam County deserve better. They deserve accountability. Vote-Out the Board of Commissioners.</p>
 
         <a href="https://clallamcountyclinicians.squarespace.com/" class="clinicians-link">Clallam County Clinicians Webpage</a>
-        <p class="update-notice">This site will be continually updated, check back for ongoing updates!</p>
+        <a href="https://x.com/ccclinicians" class="x-link">Join Us on X</a>
+        <p class="update-notice">This site will be updated as new information becomes available. Check back soon!</p>
+
+        <!-- Placeholder for potential data display -->
+        <div id="data-display"></div>
     </div>
 </body>
 </html>
